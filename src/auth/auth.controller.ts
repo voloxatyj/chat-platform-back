@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
-import { IUserService } from 'src/users/utils/users';
+import { IUserService } from 'src/users/interfaces/user';
 import { IAuthService } from './auth';
 import { CreateUserDTO } from './dtos/CreateUser.dto';
 import { Routes, Services } from '../utils/constants';
