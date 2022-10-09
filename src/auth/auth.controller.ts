@@ -3,6 +3,7 @@ import { IUserService } from 'src/users/interfaces/user';
 import { IAuthService } from './auth';
 import { CreateUserDTO } from './dtos/CreateUser.dto';
 import { Routes, Services } from '../utils/constants';
+import { instanceToPlain } from 'class-transformer';
 
 @Controller(Routes.AUTH)
 export class AuthController {
@@ -13,7 +14,7 @@ export class AuthController {
 
   @Post('register')
   registerUser(@Body() createUserDto: CreateUserDTO) {
-    this.usersService.createUser(createUserDto);
+    return instanceToPlain(this.usersService.createUser(createUserDto));
   }
 
   @Post('login')
