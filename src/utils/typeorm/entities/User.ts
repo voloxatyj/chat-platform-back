@@ -1,5 +1,13 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'users' })
 export class User {
@@ -7,6 +15,9 @@ export class User {
   id: number;
 
   @Column({ unique: true })
+  username: string;
+
+  @Column({ nullable: true })
   email: string;
 
   @Column()
@@ -15,7 +26,28 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({ select: false })
   @Exclude()
   password: string;
+
+  // @OneToMany(() => Message, (message) => message.author)
+  // @JoinColumn()
+  // messages: Message[];
+
+  // @ManyToMany(() => Group, (group) => group.users)
+  // groups: Group[];
+
+  // @OneToOne(() => Profile, { cascade: ['insert', 'update'] })
+  // @JoinColumn()
+  // profile: Profile;
+
+  // @OneToOne(() => UserPresence, { cascade: ['insert', 'update'] })
+  // @JoinColumn()
+  // presence: UserPresence;
+
+  // @OneToOne(() => Peer, (peer) => peer.user, {
+  //   cascade: ['insert', 'remove', 'update'],
+  // })
+  // @JoinColumn()
+  // peer: Peer;
 }
