@@ -8,15 +8,20 @@ export class CreateUserDTO {
   @IsNotEmpty()
   @MaxLength(32)
   @MinLength(3)
-  firstName: string;
+  first_name: string;
 
   @IsNotEmpty()
   @MaxLength(32)
   @MinLength(3)
-  lastName: string;
+  last_name: string;
 
   @IsNotEmpty()
   @MaxLength(32)
   @MinLength(8)
   password: string;
+
+  @IsNotEmpty()
+  @MaxLength(32)
+  @MinLength(2)
+  user_name: string;
 }

@@ -4,26 +4,22 @@ import { IAuthService } from './auth';
 import { Services } from '../utils/constants';
 import { compareHash } from '../helpers/password';
 import { ValidateUserDetails } from '../utils/types';
+import { User } from '../utils/typeorm/entities/User';
 
 @Injectable()
 export class AuthService implements IAuthService {
-  constructor(
-    @Inject(Services.USERS) private readonly userService: IUserService,
-  ) {}
+  constructor(@Inject(Services.USERS) private userService: IUserService) {}
 
-  async validateUser(userDetails: ValidateUserDetails) {
+  async validateUser(userCredentials): Promise<User | null> {
+    const { email, password } = userCredentials;
+
     const user = await this.userService.findUser(
-      { username: userDetails.username },
+      { email },
       { selectAll: true },
     );
-    console.log(user);
-    if (!user)
-      throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
-    const isPasswordValid = await compareHash(
-      userDetails.password,
-      user.password,
-    );
-    console.log(isPasswordValid);
+
+    const isPasswordValid = await compareHash(password, user.password);
+
     return isPasswordValid ? user : null;
   }
 }

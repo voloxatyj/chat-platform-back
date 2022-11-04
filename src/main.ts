@@ -1,17 +1,18 @@
 import 'reflect-metadata';
-import { Session, ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
 import * as passport from 'passport';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { TypeormStore } from 'connect-typeorm/out';
-import { AppDataSource } from './utils/typeorm';
+import { getRepository } from 'typeorm';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const sessionRepository = AppDataSource.getRepository(Session);
-  const { PORT, COOKIE_SECRET } = process.env;
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const { PORT, COOKIE_SECRET, ENVIRONMENT } = process.env;
+
+  app.enableCors({ origin: ['http://localhost:3000'], credentials: true });
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
 
@@ -20,10 +21,11 @@ async function bootstrap() {
       secret: COOKIE_SECRET,
       saveUninitialized: false,
       resave: false,
+      name: 'CHAT_APP_SESSION_ID',
       cookie: {
         maxAge: 864000000,
       },
-      store: new TypeormStore()
+      // store: new TypeormStore().connect(sessionRepository),
     }),
   );
 
@@ -31,11 +33,17 @@ async function bootstrap() {
   app.use(passport.session());
 
   try {
-    await app.listen(PORT, () =>
-      console.log(`Aplication is running on port ${PORT}`),
-    );
-  } catch (error) {
-    console.log(error);
+    await app.listen(PORT, () => {
+      console.log(`
+                  ################################################
+                      🚀[server]: Server listening on port: ${PORT}
+                  ################################################
+                      🚀[mode]: Running in ${ENVIRONMENT} mode
+                  ################################################
+      `);
+    });
+  } catch (err) {
+    console.log(err);
   }
 }
 bootstrap();

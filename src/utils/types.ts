@@ -1,19 +1,20 @@
 export type CreateUserDetails = {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
+  user_name: string;
 };
 
 export type ValidateUserDetails = {
-  username: string;
+  email: string;
   password: string;
 };
 
 export type FindUserParams = Partial<{
   id: number;
   email: string;
-  username: string;
+  userName: string;
 }>;
 
 export type FindUserOptions = Partial<{

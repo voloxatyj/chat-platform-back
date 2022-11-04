@@ -15,18 +15,18 @@ export class User {
   id: number;
 
   @Column({ unique: true })
-  username: string;
+  user_name: string;
 
-  @Column({ nullable: true })
+  @Column({ unique: true })
   email: string;
 
   @Column()
-  firstName: string;
+  first_name: string;
 
   @Column()
-  lastName: string;
+  last_name: string;
 
-  @Column({ select: false })
+  @Column()
   @Exclude()
   password: string;
 
