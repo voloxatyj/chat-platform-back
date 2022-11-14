@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
@@ -7,10 +7,14 @@ import * as passport from 'passport';
 import { TypeormStore } from 'connect-typeorm/out';
 import { getRepository } from 'typeorm';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { ConfigService } from '@nestjs/config';
+import { Session } from './utils/typeorm/entities/Session';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const { PORT, COOKIE_SECRET, ENVIRONMENT } = process.env;
+  const configService = app.get(ConfigService);
+  const logger = new Logger();
+  const sessionRepository = getRepository(Session);
 
   app.enableCors({ origin: ['http://localhost:3000'], credentials: true });
   app.setGlobalPrefix('api');
@@ -18,14 +22,16 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: COOKIE_SECRET,
+      secret: configService.get('COOKIE_SECRET'),
       saveUninitialized: false,
       resave: false,
-      name: 'CHAT_APP_SESSION_ID',
+      name: 'sid',
       cookie: {
-        maxAge: 864000000,
+        sameSite: true,
+        httpOnly: false,
+        maxAge: 86400000,
       },
-      // store: new TypeormStore().connect(sessionRepository),
+      store: new TypeormStore().connect(sessionRepository),
     }),
   );
 
@@ -33,17 +39,21 @@ async function bootstrap() {
   app.use(passport.session());
 
   try {
-    await app.listen(PORT, () => {
-      console.log(`
+    await app.listen(configService.get('PORT'), () => {
+      logger.log(`
                   ################################################
-                      🚀[server]: Server listening on port: ${PORT}
+                      🚀[server]: Server listening on port: ${configService.get(
+                        'PORT',
+                      )}
                   ################################################
-                      🚀[mode]: Running in ${ENVIRONMENT} mode
+                      🚀[mode]: Running in ${configService.get(
+                        'ENVIRONMENT',
+                      )} mode
                   ################################################
       `);
     });
   } catch (err) {
-    console.log(err);
+    logger.error(err);
   }
 }
 bootstrap();

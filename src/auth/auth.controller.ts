@@ -33,8 +33,8 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  login(@Res() res: Response) {
-    return res.sendStatus(200);
+  login(@Req() req: Request) {
+    return req.session;
   }
 
   @Get('status')
