@@ -16,7 +16,7 @@ import { IAuthService } from './auth';
 import { CreateUserDTO } from './dtos/CreateUser.dto';
 import { Routes, Services } from '../utils/constants';
 import { instanceToPlain } from 'class-transformer';
-import { LocalAuthGuard } from './utils/Guards';
+import { AuthenticatedGuard, LocalAuthGuard } from './utils/Guards';
 import { UserLoginDTO } from './dtos/UserLogin.dto';
 
 @Controller(Routes.AUTH)
@@ -38,7 +38,10 @@ export class AuthController {
   }
 
   @Get('status')
-  statusUser() {}
+  @UseGuards(AuthenticatedGuard)
+  async status(@Req() req: Request, @Res() res: Response) {
+    res.send(req.user);
+  }
 
   @Post('logout')
   logoutUser() {}
