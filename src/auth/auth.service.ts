@@ -4,13 +4,13 @@ import { IAuthService } from './auth';
 import { Services } from '../utils/constants';
 import { compareHash } from '../helpers/password';
 import { ValidateUserDetails } from '../utils/types';
-import { User } from '../utils/typeorm/entities/User';
+import { UserEntity } from '../utils/typeorm/entities/User';
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(@Inject(Services.USERS) private userService: IUserService) {}
 
-  async validateUser(userCredentials): Promise<User | null> {
+  async validateUser(userCredentials): Promise<UserEntity | null> {
     const { email, password } = userCredentials;
 
     const user = await this.userService.findUser(

@@ -8,13 +8,13 @@ import { TypeormStore } from 'connect-typeorm/out';
 import { getRepository } from 'typeorm';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import { Session } from './utils/typeorm/entities/Session';
+import { SessionEntity } from './utils/typeorm/entities/Session';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const configService = app.get(ConfigService);
   const logger = new Logger();
-  const sessionRepository = getRepository(Session);
+  const sessionRepository = getRepository(SessionEntity);
 
   app.enableCors({ origin: ['http://localhost:3000'], credentials: true });
   app.setGlobalPrefix('api');
@@ -45,6 +45,7 @@ async function bootstrap() {
                       🚀[server]: Server listening on port: ${configService.get(
                         'PORT',
                       )}
+                  
                   ################################################
                       🚀[mode]: Running in ${configService.get(
                         'ENVIRONMENT',
