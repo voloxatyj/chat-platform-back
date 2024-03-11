@@ -29,9 +29,12 @@ export class UserEntity {
   @Column({ nullable: true })
   avatar: string;
 
-  @Column({ select: false })
   @Exclude()
   password: string;
+
+  constructor(partial: Partial<UserEntity>) {
+    Object.assign(this, partial);
+  }
 
   // @OneToMany(() => Message, (message) => message.author)
   // @JoinColumn()

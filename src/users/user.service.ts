@@ -26,7 +26,7 @@ export class UserService implements IUserService {
         ...userDetails,
         password,
       });
-      return this.userRepository.save(newUser);
+      return new UserEntity(await this.userRepository.save(newUser));
     } catch (error) {
       throw new HttpException(
         'Houston we have a problem',

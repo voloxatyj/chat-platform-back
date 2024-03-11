@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Get,
   Inject,
@@ -7,6 +8,7 @@ import {
   Req,
   Res,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
 import { Request, Response } from 'express';
@@ -23,6 +25,7 @@ export class AuthController {
     @Inject(Services.USERS) private usersService: IUserService,
   ) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post('register')
   async registerUser(@Body() createUserDto: CreateUserDTO) {
     return instanceToPlain(await this.usersService.createUser(createUserDto));
