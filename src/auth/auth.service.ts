@@ -1,25 +1,39 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { IUserService } from '../users/interfaces/user';
-import { IAuthService } from './auth';
-import { Services } from '../utils/constants';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { compareHash } from '../helpers/password';
-import { ValidateUserDetails } from '../utils/types';
+import { IUserService } from '../users/interfaces/user';
+import { Services } from '../utils/constants';
 import { UserEntity } from '../utils/typeorm/entities/User';
+import { IAuthService } from './auth';
 
 @Injectable()
 export class AuthService implements IAuthService {
-  constructor(@Inject(Services.USERS) private userService: IUserService) {}
+  constructor(
+    @Inject(Services.USERS) private readonly userService: IUserService,
+  ) {}
 
-  async validateUser(userCredentials): Promise<UserEntity | null> {
-    const { email, password } = userCredentials;
+  async validateUser(
+    email: string,
+    password: string,
+  ): Promise<UserEntity | null> {
+    try {
+      const user = await this.userService.findUser(
+        { email },
+        { selectAll: true },
+      );
 
-    const user = await this.userService.findUser(
-      { email },
-      { selectAll: true },
-    );
+      const isPasswordValid = await compareHash(password, user.password);
 
-    const isPasswordValid = await compareHash(password, user.password);
+      if (!isPasswordValid) throw new UnauthorizedException();
 
-    return isPasswordValid ? user : null;
+      return user;
+    } catch (error) {
+      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    }
   }
 }

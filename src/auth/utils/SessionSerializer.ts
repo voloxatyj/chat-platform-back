@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
 import { IUserService } from '../../users/interfaces/user';
 import { Services } from '../../utils/constants';
@@ -13,11 +12,22 @@ export class SessionSerializer extends PassportSerializer {
   ) {
     super();
   }
-  serializeUser(user: UserEntity, done: Function) {
-    done(null, user);
+  serializeUser(
+    { id }: UserEntity,
+    done: (err: Error, { id }: Pick<UserEntity, 'id'>) => void,
+  ) {
+    done(null, { id });
   }
-  async deserializeUser(user: UserEntity, done: Function) {
-    const userDb = await this.userService.findUser({ id: user.id });
-    return userDb ? done(null, userDb) : done(null, null);
+  async deserializeUser(
+    { id }: UserEntity,
+    done: (err: Error, { id }: Pick<UserEntity, 'id'>) => void,
+  ) {
+    const user = await this.userService.findUser({ id });
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return done(null, user);
   }
 }

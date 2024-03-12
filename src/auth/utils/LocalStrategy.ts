@@ -1,20 +1,24 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { UserEntity } from '../../utils/typeorm/entities/User';
 import { Services } from '../../utils/constants';
+import { UserEntity } from '../../utils/typeorm/entities/User';
 import { IAuthService } from '../auth';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(@Inject(Services.AUTH) private authService: IAuthService) {
-    super({ usernameField: 'email' });
+  constructor(
+    @Inject(Services.AUTH) private readonly authService: IAuthService,
+  ) {
+    super();
   }
 
-  async validate(email: string, password: string): Promise<UserEntity | any> {
-    const user = await this.authService.validateUser({ email, password });
-    if (!user)
-      throw new HttpException('Invalid Credentials', HttpStatus.UNAUTHORIZED);
+  async validate(...userCredentials: string[]): Promise<UserEntity | any> {
+    const [email, password] = userCredentials;
+
+    const user = await this.authService.validateUser(email, password);
+
+    if (!user) throw new UnauthorizedException();
 
     return user;
   }

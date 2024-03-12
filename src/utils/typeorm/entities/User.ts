@@ -30,6 +30,7 @@ export class UserEntity {
   avatar: string;
 
   @Exclude()
+  @Column()
   password: string;
 
   constructor(partial: Partial<UserEntity>) {

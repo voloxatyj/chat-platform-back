@@ -7,12 +7,11 @@ import * as passport from 'passport';
 import { TypeormStore } from 'connect-typeorm/out';
 import { getRepository } from 'typeorm';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConfigService } from '@nestjs/config';
 import { SessionEntity } from './utils/typeorm/entities/Session';
 
 async function bootstrap() {
+  const { PORT, COOKIE_SECRET, ENVIRONMENT } = process.env;
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const configService = app.get(ConfigService);
   const logger = new Logger();
   const sessionRepository = getRepository(SessionEntity);
 
@@ -22,14 +21,12 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: configService.get('COOKIE_SECRET'),
+      secret: COOKIE_SECRET,
       saveUninitialized: false,
       resave: false,
-      name: 'sid',
+      name: 'CHAT_APP_SESSION_ID',
       cookie: {
-        sameSite: true,
-        httpOnly: false,
-        maxAge: 86400000,
+        maxAge: 86400000, // cookie expires 1 day later
       },
       store: new TypeormStore().connect(sessionRepository),
     }),
@@ -39,17 +36,15 @@ async function bootstrap() {
   app.use(passport.session());
 
   try {
-    await app.listen(configService.get('PORT'), () => {
+    await app.listen(PORT, () => {
       logger.log(`
+
                   ################################################
-                      🚀[server]: Server listening on port: ${configService.get(
-                        'PORT',
-                      )}
-                  
+                      🚀[server]: Server listening on port: ${PORT}
                   ################################################
-                      🚀[mode]: Running in ${configService.get(
-                        'ENVIRONMENT',
-                      )} mode
+                      
+                  ################################################
+                      🚀[mode]: Running in ${ENVIRONMENT} mode
                   ################################################
       `);
     });

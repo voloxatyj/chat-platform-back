@@ -1,8 +1,5 @@
 import { UserEntity } from '../utils/typeorm';
-import { ValidateUserDetails } from '../utils/types';
 
 export interface IAuthService {
-  validateUser(
-    userCredentials: ValidateUserDetails,
-  ): Promise<UserEntity | null>;
+  validateUser(email: string, password: string): Promise<UserEntity | null>;
 }

@@ -8,6 +8,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
     const request = context.switchToHttp().getRequest();
 
     await super.logIn(request);
+
     return result;
   }
 }
@@ -16,6 +17,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
 export class AuthenticatedGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<any> {
     const req = context.switchToHttp().getRequest();
+
     return req.isAuthenticated();
   }
 }

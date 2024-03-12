@@ -13,23 +13,34 @@ export class UserService implements IUserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async createUser(userDetails: CreateUserDetails) {
+  async createUser({
+    email,
+    password,
+    first_name,
+    last_name,
+    user_name,
+  }: CreateUserDetails) {
     try {
-      const userExist = await this.userRepository.findOne({
-        email: userDetails.email,
+      const [userExist] = await this.userRepository.find({
+        where: [{ email }, { user_name }],
       });
 
-      if (userExist)
+      if (userExist) {
         throw new HttpException('User already exists', HttpStatus.CONFLICT);
-      const password = await hashPassword(userDetails.password);
+      }
+
+      const hashed_password = await hashPassword(password);
       const newUser = await this.userRepository.create({
-        ...userDetails,
-        password,
+        email,
+        first_name,
+        last_name,
+        user_name,
+        password: hashed_password,
       });
       return new UserEntity(await this.userRepository.save(newUser));
     } catch (error) {
       throw new HttpException(
-        'Houston we have a problem',
+        'Houston we got a problem, credentials matching',
         HttpStatus.BAD_GATEWAY,
       );
     }

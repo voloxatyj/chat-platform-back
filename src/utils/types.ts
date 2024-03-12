@@ -6,11 +6,6 @@ export type CreateUserDetails = {
   user_name: string;
 };
 
-export type ValidateUserDetails = {
-  email: string;
-  password: string;
-};
-
 export type FindUserParams = Partial<{
   id: number;
   email: string;

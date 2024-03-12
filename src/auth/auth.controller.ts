@@ -3,6 +3,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  HttpStatus,
   Inject,
   Post,
   Req,
@@ -13,7 +14,7 @@ import {
 import { instanceToPlain } from 'class-transformer';
 import { Request, Response } from 'express';
 import { IUserService } from 'src/users/interfaces/user';
-import { Routes, Services } from '../utils/constants';
+import { Routes, Services } from 'src/utils/constants';
 import { IAuthService } from './auth';
 import { CreateUserDTO } from './dtos/CreateUser.dto';
 import { AuthenticatedGuard, LocalAuthGuard } from './utils/Guards';
@@ -21,8 +22,8 @@ import { AuthenticatedGuard, LocalAuthGuard } from './utils/Guards';
 @Controller(Routes.AUTH)
 export class AuthController {
   constructor(
-    @Inject(Services.AUTH) private authService: IAuthService,
-    @Inject(Services.USERS) private usersService: IUserService,
+    @Inject(Services.AUTH) private readonly authService: IAuthService,
+    @Inject(Services.USERS) private readonly usersService: IUserService,
   ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -33,8 +34,8 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  login(@Req() req: Request) {
-    return req.session;
+  login(@Res() res: Response) {
+    return res.send(HttpStatus.OK);
   }
 
   @Get('status')
