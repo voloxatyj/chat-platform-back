@@ -15,3 +15,9 @@ export type FindUserParams = Partial<{
 export type FindUserOptions = Partial<{
   selectAll: boolean;
 }>;
+
+export type CreateConversationParams = {
+  authorId: number;
+  recipientId: number;
+  message: string;
+};

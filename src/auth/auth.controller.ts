@@ -40,7 +40,7 @@ export class AuthController {
 
   @Get('status')
   @UseGuards(AuthenticatedGuard)
-  async status(@Req() req: Request, @Res() res: Response) {
+  status(@Req() req: Request, @Res() res: Response) {
     res.send(req.user);
   }
 

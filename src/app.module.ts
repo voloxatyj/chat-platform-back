@@ -3,8 +3,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from 'src/auth/auth.module';
 import { UsersModule } from 'src/users/users.module';
-import entities from './utils/typeorm';
+import entities from 'src/utils/typeorm';
 import { PassportModule } from '@nestjs/passport';
+import { ConversationsModule } from 'src/conversations/conversations.module';
 
 let envFilePath = '.env.development';
 if (process.env.ENVIRONMENT === 'PRODUCTION') {
@@ -16,6 +17,7 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') {
   imports: [
     AuthModule,
     UsersModule,
+    ConversationsModule,
     ConfigModule.forRoot({ envFilePath }),
     PassportModule.register({ session: true }),
     TypeOrmModule.forRoot({
