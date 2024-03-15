@@ -1,14 +1,14 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
-import { IUserService } from '../../users/interfaces/user';
-import { Services } from '../../utils/constants';
-import { UserEntity } from '../../utils/typeorm';
+import { IUsersService } from 'src/users/users';
+import { Services } from 'src/utils/constants';
+import { UserEntity } from 'src/utils/typeorm';
 
 @Injectable()
 export class SessionSerializer extends PassportSerializer {
   constructor(
     @Inject(Services.USERS)
-    private readonly userService: IUserService,
+    private readonly usersService: IUsersService,
   ) {
     super();
   }
@@ -22,7 +22,7 @@ export class SessionSerializer extends PassportSerializer {
     { id }: UserEntity,
     done: (err: Error, { id }: Pick<UserEntity, 'id'>) => void,
   ) {
-    const user = await this.userService.findUser({ id });
+    const user = await this.usersService.findUser({ id });
 
     if (!user) {
       throw new UnauthorizedException();

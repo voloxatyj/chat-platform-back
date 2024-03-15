@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { instanceToPlain } from 'class-transformer';
 import { Request, Response } from 'express';
-import { IUserService } from 'src/users/interfaces/user';
+import { IUsersService } from 'src/users/users';
 import { Routes, Services } from 'src/utils/constants';
 import { IAuthService } from './auth';
 import { CreateUserDTO } from './dtos/CreateUser.dto';
@@ -23,7 +23,7 @@ import { AuthenticatedGuard, LocalAuthGuard } from './utils/Guards';
 export class AuthController {
   constructor(
     @Inject(Services.AUTH) private readonly authService: IAuthService,
-    @Inject(Services.USERS) private readonly usersService: IUserService,
+    @Inject(Services.USERS) private readonly usersService: IUsersService,
   ) {}
 
   @UseInterceptors(ClassSerializerInterceptor)
