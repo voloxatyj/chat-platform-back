@@ -1,13 +1,14 @@
 import { Exclude } from 'class-transformer';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { ParticipantEntity } from './Participant';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -32,6 +33,23 @@ export class UserEntity {
   @Exclude()
   @Column()
   password: string;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updated_at: Date;
+
+  @OneToOne(() => ParticipantEntity, { cascade: ['insert', 'update'] })
+  @JoinColumn()
+  participant: ParticipantEntity;
 
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
