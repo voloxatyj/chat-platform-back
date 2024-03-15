@@ -1,11 +1,11 @@
-import { UserEntity } from '../../utils/typeorm';
+import { UserEntity } from '../utils/typeorm';
 import {
   CreateUserDetails,
   FindUserOptions,
   FindUserParams,
-} from '../../utils/types';
+} from 'src/utils/types';
 
-export interface IUserService {
+export interface IUsersService {
   createUser(userDetails: CreateUserDetails): Promise<UserEntity>;
   findUser(
     findUserParams: FindUserParams,
