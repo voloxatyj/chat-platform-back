@@ -4,11 +4,13 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ParticipantEntity } from './Participant';
+import { MessageEntity } from './Message';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -30,8 +32,8 @@ export class UserEntity {
   @Column({ nullable: true })
   avatar: string;
 
-  @Exclude()
   @Column()
+  @Exclude()
   password: string;
 
   @CreateDateColumn({
@@ -51,13 +53,13 @@ export class UserEntity {
   @JoinColumn()
   participant: ParticipantEntity;
 
+  @OneToMany(() => MessageEntity, (message) => message.author)
+  @JoinColumn()
+  messages: MessageEntity[];
+
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }
-
-  // @OneToMany(() => Message, (message) => message.author)
-  // @JoinColumn()
-  // messages: Message[];
 
   // @ManyToMany(() => Group, (group) => group.users)
   // groups: Group[];

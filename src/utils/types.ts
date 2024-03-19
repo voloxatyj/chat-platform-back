@@ -1,4 +1,4 @@
-import { UserEntity } from './typeorm';
+import { ConversationEntity, MessageEntity, UserEntity } from './typeorm';
 
 export type CreateUserDetails = {
   email: string;
@@ -36,3 +36,33 @@ export type CreateParticipantParams = {
 export interface AuthenticatedRequest extends Request {
   user: UserEntity;
 }
+
+export type CreateMessageParams = {
+  id: number;
+  content?: string;
+  user: UserEntity;
+};
+
+export type CreateMessageResponse = {
+  message: MessageEntity;
+  conversation: ConversationEntity;
+};
+
+export type DeleteMessageParams = {
+  userId: number;
+  conversationId: number;
+  messageId: number;
+};
+
+export type FindMessageParams = {
+  userId: number;
+  conversationId: number;
+  messageId: number;
+};
+
+export type EditMessageParams = {
+  conversationId: number;
+  messageId: number;
+  userId: number;
+  content: string;
+};
