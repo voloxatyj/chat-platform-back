@@ -19,16 +19,10 @@ export class ConversationsService implements IConversationsService {
   async getConversations(id: number): Promise<ConversationEntity[]> {
     return this.conversationRepository
       .createQueryBuilder('conversation')
-      .leftJoinAndSelect('conversation.lastMessageSent', 'lastMessageSent')
       .leftJoinAndSelect('conversation.creator', 'creator')
       .leftJoinAndSelect('conversation.recipient', 'recipient')
-      .leftJoinAndSelect('creator.peer', 'creatorPeer')
-      .leftJoinAndSelect('recipient.peer', 'recipientPeer')
-      .leftJoinAndSelect('creator.profile', 'creatorProfile')
-      .leftJoinAndSelect('recipient.profile', 'recipientProfile')
       .where('creator.id = :id', { id })
       .orWhere('recipient.id = :id', { id })
-      .orderBy('conversation.lastMessageSentAt', 'DESC')
       .getMany();
   }
 

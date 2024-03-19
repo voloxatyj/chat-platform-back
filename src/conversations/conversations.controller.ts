@@ -17,7 +17,7 @@ import { IUsersService } from 'src/users/users';
 import { IParticipantsService } from 'src/participants/participants';
 import { UserNotFoundException } from 'src/users/exceptions/UserNotFound';
 import { CreateConversationException } from './exceptions/CreateConversation';
-import { ConversationExistsException } from './exceptions/ConversationExistsException';
+import { ConversationExistsException } from './exceptions/ConversationExists';
 
 @Controller(Routes.CONVERSATIONS)
 @UseGuards(AuthenticatedGuard)
