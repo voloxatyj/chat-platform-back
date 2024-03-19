@@ -43,4 +43,11 @@ export class MessagesService {
       throw new CannotCreateMessageException();
     }
   }
+
+  getMessages(conversationId: number): Promise<MessageEntity[]> {
+    return this.messagesRepository.find({
+      where: { conversation: { id: conversationId } },
+      order: { created_at: 'DESC' },
+    });
+  }
 }

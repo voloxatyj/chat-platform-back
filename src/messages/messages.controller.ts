@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
   Inject,
   Param,
@@ -15,6 +16,7 @@ import { UserEntity } from 'src/utils/typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { EmptyMessageException } from './exceptions/EmptyMessageException';
 import { IMessageService } from './messages';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller(Routes.MESSAGES)
 export class MessagesController {
@@ -22,6 +24,15 @@ export class MessagesController {
     @Inject(Services.MESSAGES)
     private readonly messagesService: IMessageService,
   ) {}
+
+  @Get(':conversationId')
+  @SkipThrottle()
+  async getMessagesFromConversation(
+    @Param('conversationId', ParseIntPipe) conversationId: number,
+  ) {
+    const messages = await this.messagesService.getMessages(conversationId);
+    return { conversationId, messages };
+  }
 
   @Post(':id')
   async createMessage(
