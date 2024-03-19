@@ -7,6 +7,7 @@ import entities from 'src/utils/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { ConversationsModule } from 'src/conversations/conversations.module';
 import { ParticipantsModule } from './participants/participants.module';
+import { MessagesModule } from './messages/messages.module';
 
 let envFilePath = '.env.development';
 if (process.env.ENVIRONMENT === 'PRODUCTION') {
@@ -33,6 +34,7 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') {
       entities,
       logging: false,
     }),
+    MessagesModule,
   ],
   controllers: [],
   providers: [],
