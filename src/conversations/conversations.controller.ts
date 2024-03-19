@@ -2,22 +2,25 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Inject,
   Param,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { AuthenticatedGuard } from 'src/auth/utils/Guards';
-import { Routes, Services } from 'src/utils/constants';
-import { IConversationsService } from './conversations';
-import { createConversationDto } from './dtos/CreateConversation.dto';
-import { AuthUser } from 'src/utils/decorators';
-import { ConversationEntity, UserEntity } from 'src/utils/typeorm';
-import { IUsersService } from 'src/users/users';
 import { IParticipantsService } from 'src/participants/participants';
 import { UserNotFoundException } from 'src/users/exceptions/UserNotFound';
-import { CreateConversationException } from './exceptions/CreateConversation';
+import { IUsersService } from 'src/users/users';
+import { Routes, Services } from 'src/utils/constants';
+import { AuthUser } from 'src/utils/decorators';
+import { UserEntity } from 'src/utils/typeorm';
+import { IConversationsService } from './conversations';
+import { createConversationDto } from './dtos/CreateConversation.dto';
 import { ConversationExistsException } from './exceptions/ConversationExists';
+import { CreateConversationException } from './exceptions/CreateConversation';
 
 @Controller(Routes.CONVERSATIONS)
 @UseGuards(AuthenticatedGuard)
@@ -35,7 +38,8 @@ export class ConversationsController {
   async createConversation(
     @AuthUser() creator: UserEntity,
     @Body() { user_name, message: content }: createConversationDto,
-  ): Promise<ConversationEntity> {
+    @Res() res: Response,
+  ): Promise<Response<any, Record<string, any>>> {
     const recipient = await this.usersService.findUser({ user_name });
     if (!recipient) throw new UserNotFoundException();
     if (creator.id === recipient.id)
@@ -48,13 +52,12 @@ export class ConversationsController {
     );
     if (exists) throw new ConversationExistsException();
 
-    const conversation: ConversationEntity =
-      await this.conversationsService.createConversation(creator, {
-        recipient,
-        content,
-      });
+    await this.conversationsService.createConversation(creator, {
+      recipient,
+      content,
+    });
 
-    return conversation;
+    return res.sendStatus(HttpStatus.CREATED);
   }
 
   @Get()
