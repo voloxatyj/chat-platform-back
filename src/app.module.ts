@@ -8,6 +8,7 @@ import { PassportModule } from '@nestjs/passport';
 import { ConversationsModule } from 'src/conversations/conversations.module';
 import { ParticipantsModule } from './participants/participants.module';
 import { MessagesModule } from './messages/messages.module';
+import { GatewayModule } from './gateway/gateway.module';
 
 let envFilePath = '.env.development';
 if (process.env.ENVIRONMENT === 'PRODUCTION') {
@@ -35,6 +36,7 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') {
       logging: false,
     }),
     MessagesModule,
+    GatewayModule,
   ],
   controllers: [],
   providers: [],
