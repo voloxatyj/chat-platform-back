@@ -27,7 +27,7 @@ export class MessagesController {
 
   @Get(':conversationId')
   @SkipThrottle()
-  async getMessagesFromConversation(
+  async MessagesFromConversation(
     @Param('conversationId', ParseIntPipe) conversationId: number,
   ) {
     const messages = await this.messagesService.getMessages(conversationId);

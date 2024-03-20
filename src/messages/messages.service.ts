@@ -46,6 +46,7 @@ export class MessagesService {
 
   getMessages(conversationId: number): Promise<MessageEntity[]> {
     return this.messagesRepository.find({
+      relations: ['author'],
       where: { conversation: { id: conversationId } },
       order: { created_at: 'DESC' },
     });
