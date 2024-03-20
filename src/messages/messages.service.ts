@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { instanceToPlain } from 'class-transformer';
 import { IConversationsService } from 'src/conversations/conversations';
 import { ConversationNotFoundException } from 'src/conversations/exceptions/ConversationNotFound';
 import { Services } from 'src/utils/constants';
@@ -7,7 +8,6 @@ import { MessageEntity } from 'src/utils/typeorm';
 import { CreateMessageParams } from 'src/utils/types';
 import { Repository } from 'typeorm';
 import { CannotCreateMessageException } from './exceptions/CannotCreateMessage';
-import { instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class MessagesService {

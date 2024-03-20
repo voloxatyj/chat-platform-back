@@ -9,6 +9,7 @@ import { ConversationsModule } from 'src/conversations/conversations.module';
 import { ParticipantsModule } from './participants/participants.module';
 import { MessagesModule } from './messages/messages.module';
 import { GatewayModule } from './gateway/gateway.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 let envFilePath = '.env.development';
 if (process.env.ENVIRONMENT === 'PRODUCTION') {
@@ -37,6 +38,7 @@ if (process.env.ENVIRONMENT === 'PRODUCTION') {
     }),
     MessagesModule,
     GatewayModule,
+    EventEmitterModule.forRoot(),
   ],
   controllers: [],
   providers: [],

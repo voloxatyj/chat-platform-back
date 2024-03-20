@@ -9,6 +9,8 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { SkipThrottle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { Routes, Services } from 'src/utils/constants';
 import { AuthUser } from 'src/utils/decorators';
@@ -16,13 +18,13 @@ import { UserEntity } from 'src/utils/typeorm';
 import { CreateMessageDto } from './dtos/CreateMessage.dto';
 import { EmptyMessageException } from './exceptions/EmptyMessageException';
 import { IMessageService } from './messages';
-import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller(Routes.MESSAGES)
 export class MessagesController {
   constructor(
     @Inject(Services.MESSAGES)
     private readonly messagesService: IMessageService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   @Get(':conversationId')
@@ -46,7 +48,9 @@ export class MessagesController {
 
     const params = { user, id, content };
 
-    await this.messagesService.createMessage(params);
+    const response = await this.messagesService.createMessage(params);
+
+    this.eventEmitter.emit('message.create', response);
 
     return res.sendStatus(HttpStatus.CREATED);
   }

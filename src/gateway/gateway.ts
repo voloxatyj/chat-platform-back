@@ -1,4 +1,5 @@
 import { Logger } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import {
   MessageBody,
   OnGatewayConnection,
@@ -9,6 +10,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
+import { CreateMessageResponse } from 'src/utils/types';
 
 @WebSocketGateway({
   cors: {
@@ -41,5 +43,10 @@ export class MessagingGateway
   @SubscribeMessage('createMessage')
   handleCreateMessage(@MessageBody() data: any) {
     this.logger.log('Create Message');
+  }
+
+  @OnEvent('message.create')
+  handleMessageCreateEvent(payload: CreateMessageResponse) {
+    this.logger.log('Inside message.create');
   }
 }
